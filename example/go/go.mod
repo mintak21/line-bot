@@ -1,4 +1,4 @@
-module mintak.com/line-bot
+module mintak.com/linebot
 
 go 1.13
 
