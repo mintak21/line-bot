@@ -3,7 +3,7 @@ COPY example/python/requirements.txt /app/requirements.txt
 RUN pip3 install -r /app/requirements.txt
 
 # hadolint ignore=DL3007
-FROM gcr.io/distroless/python3-debian10
+FROM gcr.io/distroless/python3-debian10:latest
 COPY --from=builder /usr/local/lib/python3.7/site-packages /root/.local/lib/python3.7/site-packages
 COPY --from=builder /usr/local/bin/gunicorn /app/gunicorn
 COPY example/python/server.py /app/server.py
