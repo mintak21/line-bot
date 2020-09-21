@@ -1,5 +1,5 @@
 build:
   docker:
     web: herokuDockerfile
-run:
-  web: gunicorn server:app -c config.py
+# run:
+#   web: gunicorn server:app -c config.py

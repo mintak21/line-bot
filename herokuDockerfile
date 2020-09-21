@@ -1,15 +1,16 @@
 # See. https://devcenter.heroku.com/articles/build-docker-images-heroku-yml#known-issues-and-limitations
 # ContextがDockerfileのロケーション以外を指定することができないため、heroku専用のDockerfileを用意する
-FROM python:3.7-slim-buster as builder
-COPY example/python/requirements.txt /app/requirements.txt
-RUN pip3 install -r /app/requirements.txt
 
-# hadolint ignore=DL3007
-FROM gcr.io/distroless/python3-debian10:latest
-COPY --from=builder /usr/local/lib/python3.7/site-packages /root/.local/lib/python3.7/site-packages
-COPY --from=builder /usr/local/bin/gunicorn /app/gunicorn
-COPY example/python/server.py /app/server.py
-COPY example/python/config.py /app/config.py
+# また、ymlのRunのコマンドは/bin/sh -c で実行しようとするため、distrolessは使用しないほうが無難
+FROM python:3.8-alpine
 
-WORKDIR /app
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+RUN mkdir -p /usr/local/application
+COPY example/python /usr/local/application
+RUN pip3 install -r /usr/local/application/requirements.txt && \
+  rm -f /usr/local/application/requirements.txt
+# EXPOSE 5000
+
+WORKDIR /usr/local/application
 CMD ["gunicorn", "server:app", "-c", "config.py"]
