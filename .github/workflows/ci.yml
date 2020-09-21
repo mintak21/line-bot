@@ -38,7 +38,6 @@ jobs:
         with:
           python-root-list: "./exapmle/python"
           use-flake8: true
-          extra-flake8-options: "--ignore=E221, W293, W504 --max-line-length=150"
           use-isort: true
           use-pylint: false
           use-pycodestyle: false
