@@ -32,6 +32,7 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    app.logger.warn("Reply_token: " + event.reply_token)
     if (event.reply_token == '00000000000000000000000000000000' or
             event.reply_token == 'ffffffffffffffffffffffffffffffff'):
         app.logger.info('Verify Event Received')
