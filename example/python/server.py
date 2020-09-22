@@ -7,6 +7,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 
@@ -32,7 +33,7 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    app.logger.warn("Reply_token: " + event.reply_token)
+    # For Verify
     if (event.reply_token == '00000000000000000000000000000000' or
             event.reply_token == 'ffffffffffffffffffffffffffffffff'):
         app.logger.info('Verify Event Received')
