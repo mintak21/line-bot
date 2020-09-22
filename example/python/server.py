@@ -11,12 +11,12 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 
 
-@app.route("/health", methods=['GET'])
+@app.route('/health', methods=['GET'])
 def health():
     return 'OK'
 
 
-@app.route("/callback", methods=['POST'])
+@app.route('/callback', methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
@@ -24,7 +24,7 @@ def callback():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        app.logger.warn("Invalid signature. Please check your channel access token/channel secret.")
+        app.logger.warn('Invalid signature. Please check your channel access token/channel secret.')
         abort(400)
 
     return 'OK'
@@ -32,6 +32,10 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    if (event.reply_token == '00000000000000000000000000000000' or
+            event.reply_token == 'ffffffffffffffffffffffffffffffff'):
+        app.logger.info('Verify Event Received')
+        return
     # オウム返し
     line_bot_api.reply_message(
         event.reply_token,
