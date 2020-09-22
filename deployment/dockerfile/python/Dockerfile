@@ -8,6 +8,8 @@ COPY --from=builder /usr/local/lib/python3.7/site-packages /root/.local/lib/pyth
 COPY --from=builder /usr/local/bin/gunicorn /app/gunicorn
 COPY example/python/server.py /app/server.py
 COPY example/python/config.py /app/config.py
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR /app
 CMD ["gunicorn", "server:app", "-c", "config.py"]
