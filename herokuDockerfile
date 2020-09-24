@@ -1,0 +1,16 @@
+# See. https://devcenter.heroku.com/articles/build-docker-images-heroku-yml#known-issues-and-limitations
+# ContextがDockerfileのロケーション以外を指定することができないため、heroku専用のDockerfileを用意する
+
+# また、ymlのRunのコマンドは/bin/sh -c で実行しようとするため、distrolessは使用しないほうが無難
+FROM python:3.8-alpine
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+#RUN mkdir -p /usr/local/application
+COPY example/python /usr/local/application
+RUN pip3 install -r /usr/local/application/requirements.txt && \
+  rm -f /usr/local/application/requirements.txt
+# EXPOSE 5000
+
+WORKDIR /usr/local/application
+CMD ["gunicorn", "server:app", "-c", "config.py"]

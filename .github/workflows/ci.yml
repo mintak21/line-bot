@@ -1,0 +1,97 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  go-lint:
+    name: Go Lint
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Lint
+        id: lint
+        uses: reviewdog/action-golangci-lint@v1
+        with:
+          golangci_lint_flags: "-c .golangci.yml"
+          reporter: github-pr-review
+          filter_mode: nofilter
+          fail_on_error: true
+
+  py-lint:
+    name: Python Lint
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Lint
+        id: lint
+        uses: ricardochaves/python-lint@v1.3.0
+        with:
+          python-root-list: "./example/python"
+          use-flake8: true
+          extra-flake8-options: "--max-line-length=150"
+          use-isort: true
+          use-pylint: false
+          use-pycodestyle: false
+          use-black: false
+          use-mypy: false
+
+  dockerfile-lint:
+    name: Dockerfile Lint
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Lint
+        id: lint
+        uses: reviewdog/action-hadolint@v1
+        with:
+          reporter: github-pr-review
+          filter_mode: nofilter
+          fail_on_error: true
+
+  dockerfile-scan:
+    name: Scan Image
+    needs: [dockerfile-lint]
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [python, go]
+
+    steps:
+      - name: Setup Go
+        id: setup
+        uses: actions/setup-go@v2.1.2
+        with:
+          go-version: 1.14
+
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Build image from Dockerfile
+        id: build
+        run: |
+          TAG="${{ matrix.service }}:ci"
+          docker build -f deployment/dockerfile/${{ matrix.service }}/Dockerfile -t ${TAG} .
+          echo "::set-output name=tag::${TAG}"
+
+      - name: Run Beta Container Scanner
+        id: beta-scanner
+        uses: Azure/container-scan@v0
+        with:
+          image-name: ${{ steps.build.outputs.tag }}
+          run-quality-checks: true
+          severity-threshold: HIGH
