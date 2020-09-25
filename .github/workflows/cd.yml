@@ -23,7 +23,7 @@ jobs:
 
       - name: Setup GCloud
         id: setup
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@v0.1.3
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: ${{ env.GCLOUD_VERSION }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
