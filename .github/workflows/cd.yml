@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - cloudrun
 
 env:
   GCLOUD_VERSION: 311.0.0
