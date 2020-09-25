@@ -16,12 +16,12 @@ steps:
       - --dockerfile=deployment/dockerfile/python/Dockerfile
       - --context=.
     env:
-      - TAG=$BRANCH_NAME:$SHORT_SHA
+      - "TAG=$BRANCH_NAME:$SHORT_SHA"
 
   - id: build-go
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$TAG
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$BRANCH_NAME:$SHORT_SHA
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/go/Dockerfile
