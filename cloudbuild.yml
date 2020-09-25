@@ -1,3 +1,11 @@
+options:
+  machineType: N1_HIGHCPU_8
+  env:
+    - REGION=us-west1
+    - TAG=$BRANCH_NAME:$SHORT_SHA
+    - SERVICE_NAME=mintaklinebot
+    - KANIKO_CACHE_TTL=336h
+logsBucket: gs://cloudbuildlog-2x
 steps:
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
@@ -37,10 +45,3 @@ steps:
 images:
   - us.gcr.io/$PROJECT_ID/linebot/python
   - us.gcr.io/$PROJECT_ID/linebot/go
-options:
-  machineType: N1_HIGHCPU_8
-  env:
-    - REGION=us-west1
-    - TAG=$BRANCH_NAME:$SHORT_SHA
-    - SERVICE_NAME=mintaklinebot
-    - KANIKO_CACHE_TTL=24h
