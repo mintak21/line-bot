@@ -6,6 +6,9 @@ on:
       - master
   pull_request:
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   go-lint:
     name: Go Lint
