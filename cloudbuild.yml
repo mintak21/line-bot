@@ -1,0 +1,46 @@
+steps:
+  - id: build-python
+    name: gcr.io/kaniko-project/executor:latest
+    args:
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$TAG
+      - --cache=true
+      - --cache-ttl=$KANIKO_CACHE_TTL
+      - --dockerfile=deployment/dockerfile/python/Dockerfile
+      - --context=.
+
+  - id: build-go
+    name: gcr.io/kaniko-project/executor:latest
+    args:
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$TAG
+      - --cache=true
+      - --cache-ttl=$KANIKO_CACHE_TTL
+      - --dockerfile=deployment/dockerfile/go/Dockerfile
+      - --context=.
+
+  - id: Deploy To Cloud Run
+    waitFor:
+      - build-python
+      - build-go
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - $SERVICE_NAME
+      - --image
+      - us.gcr.io/$PROJECT_ID/linebot/python:$TAG
+      - --region
+      - $REGION
+      - --platform
+      - managed
+
+images:
+  - us.gcr.io/$PROJECT_ID/linebot/python
+  - us.gcr.io/$PROJECT_ID/linebot/go
+options:
+  machineType: N1_HIGHCPU_8
+  env:
+    - REGION=us-west1
+    - TAG=$BRANCH_NAME:$SHORT_SHA
+    - SERVICE_NAME=mintaklinebot
+    - KANIKO_CACHE_TTL=24h
