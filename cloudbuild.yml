@@ -1,5 +1,5 @@
 options:
-  machineType: N1_HIGHCPU_8
+  machineType: N1_HIGHCPU_32
   env:
     - REGION=us-west1
     - TAG=$BRANCH_NAME-$SHORT_SHA
