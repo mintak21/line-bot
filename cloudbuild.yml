@@ -8,9 +8,6 @@ steps:
       - "pipefail"
       - "-c"
       - |-
-        echo "docker image tag test is :: $$_DOCKER_IMAGE_TAG"
-        echo "docker image tag test2 is :: $${_DOCKER_IMAGE_TAG}"
-        echo $$_DOCKER_IMAGE_TAG
         echo "docker image tag test3 is :: ${_DOCKER_IMAGE_TAG}"
         echo "docker image tag test4 is :: $_DOCKER_IMAGE_TAG"
 
@@ -63,4 +60,3 @@ substitutions:
 
 options:
   machineType: N1_HIGHCPU_32
-  substitution_option: ALLOW_LOOSE
