@@ -4,7 +4,7 @@ steps:
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_BRANCH}-${_BUILD_SHA}
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${DOCKER_IMAGE_TAG}
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
@@ -48,6 +48,6 @@ options:
   machineType: N1_HIGHCPU_32
   env:
     - REGION=us-west1
-    - TAG=$_BRANCH_$_BUILD_SHA
+    - DOCKER_IMAGE_TAG=${_BRANCH}-${_BUILD_SHA}
     - SERVICE_NAME=mintaklinebot
     - KANIKO_CACHE_TTL=336h
