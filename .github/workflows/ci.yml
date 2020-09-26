@@ -150,7 +150,7 @@ jobs:
           working_directory: ./
           reporter: github-pr-review
           filter_mode: nofilter
-          fail_on_error: true
+          fail_on_error: false
 
       - name: Terraform Plan
         id: plan
