@@ -37,7 +37,7 @@ jobs:
       - name: Cloud Build
         id: cloud-build
         run: |-
-          gcloud builds submit --config cloudbuild.yml --substitutions BRANCH=${{ steps.version.outputs.source_branch }}  SHA=${{ github.sha }}
+          gcloud builds submit --config cloudbuild.yml --substitutions BRANCH=${{ steps.version.outputs.source_branch }},SHA=${{ github.sha }}
   # deploy:
   #   name: Deploy to Cloud Run
   #   needs: [build]
