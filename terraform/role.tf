@@ -12,7 +12,7 @@ resource google_service_account_iam_member cloud_run_iam {
 
 resource google_project_iam_member cloud_run_admin_role {
   project = var.project_id
-  role    = "roles/secretmanager.viewer"
+  role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${google_service_account.sa_for_cloud_run.email}"
 }
 
