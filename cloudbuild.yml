@@ -11,7 +11,7 @@ steps:
       - --context=.
     env:
       - IMAGE_TAG_TEST=test_$_BUILD_SHA
-
+  #
   # - id: build-go
   #   name: gcr.io/kaniko-project/executor:latest
   #   args:
