@@ -8,20 +8,16 @@ steps:
       - "pipefail"
       - "-c"
       - |-
-        echo "docker image tag test is :: $$DOCKER_IMAGE_TAG"
-        echo "docker image tag test2 is :: $${DOCKER_IMAGE_TAG}"
-        echo $$DOCKER_IMAGE_TAG
-        echo $IMAGE_TAG_TEST
-        echo $$IMAGE_TAG_TEST
-        echo "docker image tag test3 is :: ${DOCKER_IMAGE_TAG}"
-        echo "docker image tag test4 is :: $DOCKER_IMAGE_TAG"
-    env:
-      - IMAGE_TAG_TEST=test_$_BUILD_SHA
+        echo "docker image tag test is :: $$_DOCKER_IMAGE_TAG"
+        echo "docker image tag test2 is :: $${_DOCKER_IMAGE_TAG}"
+        echo $$_DOCKER_IMAGE_TAG
+        echo "docker image tag test3 is :: ${_DOCKER_IMAGE_TAG}"
+        echo "docker image tag test4 is :: $_DOCKER_IMAGE_TAG"
 
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$IMAGE_TAG_TEST
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
@@ -32,13 +28,11 @@ steps:
   - id: build-go
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:${TAG2}
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
       - --cache=true
-      - --cache-ttl=336h
+      - --cache-ttl=${_KANIKO_CACHE_TTL}
       - --dockerfile=deployment/dockerfile/go/Dockerfile
       - --context=.
-    env:
-      - TAG2=test_$_BUILD_SHA
 
   - id: Deploy To Cloud Run
     waitFor:
@@ -49,24 +43,23 @@ steps:
     args:
       - run
       - deploy
-      - $$SERVICE_NAME
+      - ${_SERVICE_NAME}
       - --image
-      - us.gcr.io/$PROJECT_ID/linebot/python:$$TAG
+      - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
       - --region
-      - $REGION
+      - ${_REGION}
       - --platform
       - managed
-    env:
-      - SERVICE_NAME=mintaklinebot
 
 images:
   - us.gcr.io/$PROJECT_ID/linebot/python
   - us.gcr.io/$PROJECT_ID/linebot/go
 
+substitutions:
+  _DOCKER_IMAGE_TAG: latest
+  _SERVICE_REGION: us-west1
+  _SERVICE_NAME: mintaklinebot
+  _KANIKO_CACHE_TTL: 600h
+
 options:
   machineType: N1_HIGHCPU_32
-  env:
-    - REGION=us-west1
-    - DOCKER_IMAGE_TAG=${_BRANCH}-${_BUILD_SHA}
-    - SERVICE_NAME=mintaklinebot
-    - KANIKO_CACHE_TTL=336h
