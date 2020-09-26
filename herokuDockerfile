@@ -4,7 +4,6 @@
 # また、ymlのRunのコマンドは/bin/sh -c で実行しようとするため、distrolessは使用しないほうが無難
 FROM python:3.8-alpine
 
-ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 #RUN mkdir -p /usr/local/application
 COPY example/python /usr/local/application
