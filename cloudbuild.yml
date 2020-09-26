@@ -4,7 +4,7 @@ steps:
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:testTag
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$$TAG
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
@@ -13,7 +13,7 @@ steps:
   - id: build-go
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$${TAG2}
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$$TAG2
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/go/Dockerfile
@@ -30,9 +30,9 @@ steps:
     args:
       - run
       - deploy
-      - $${SERVICE_NAME}
+      - $$SERVICE_NAME
       - --image
-      - us.gcr.io/$PROJECT_ID/linebot/python:$${TAG}
+      - us.gcr.io/$PROJECT_ID/linebot/python:$$TAG
       - --region
       - $REGION
       - --platform
