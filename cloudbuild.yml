@@ -39,8 +39,8 @@ steps:
       - managed
 
 images:
-  - us.gcr.io/$PROJECT_ID/linebot/python
-  - us.gcr.io/$PROJECT_ID/linebot/go
+  - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
+  - us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
 
 substitutions:
   _DOCKER_IMAGE_TAG: latest
