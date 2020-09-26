@@ -7,7 +7,8 @@ steps:
       - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
       - --cache=true
       - --cache-ttl=${_KANIKO_CACHE_TTL}
-      - --dockerfile=deployment/dockerfile/python/Dockerfile
+      #- --dockerfile=deployment/dockerfile/python/Dockerfile
+      - --dockerfile=herokuDockerfile
       - --context=.
     env:
       - IMAGE_TAG_TEST=test_$_BUILD_SHA
