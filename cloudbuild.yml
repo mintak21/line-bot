@@ -16,7 +16,7 @@ steps:
     args:
       - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
       - --cache=true
-      - --cache-ttl=336h
+      - --cache-ttl=${_KANIKO_CACHE_TTL}
       - --dockerfile=deployment/dockerfile/python/Dockerfile
       - --context=.
     env:
@@ -44,7 +44,7 @@ steps:
       - --image
       - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
       - --region
-      - ${_REGION}
+      - ${_SERVICE_REGION}
       - --platform
       - managed
 
