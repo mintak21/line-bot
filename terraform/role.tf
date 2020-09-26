@@ -10,17 +10,11 @@ resource google_service_account_iam_member cloud_run_iam {
   member             = "serviceAccount:${data.google_project.my_project.number}@cloudbuild.gserviceaccount.com"
 }
 
-# resource google_project_iam_member cloud_run_admin_role {
-#   project = var.project_id
-#   role    = "roles/run.admin"
-#   member  = "serviceAccount:${google_service_account.sa_for_cloud_run.email}"
-# }
-
-# resource google_project_iam_member cloud_run_sa_role {
-#   project = var.project_id
-#   role    = "roles/iam.serviceAccountUser"
-#   member  = "serviceAccount:${google_service_account.sa_for_cloud_run.email}"
-# }
+resource google_project_iam_member cloud_run_admin_role {
+  project = var.project_id
+  role    = "roles/secretmanager.viewer"
+  member  = "serviceAccount:${google_service_account.sa_for_cloud_run.email}"
+}
 
 data google_iam_policy noauth {
   binding {
