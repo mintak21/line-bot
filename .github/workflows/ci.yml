@@ -106,7 +106,7 @@ jobs:
       run:
         working-directory: ./terraform
     env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.TF_GCP_SA_KEY }}
+      GOOGLE_CREDENTIALS: ${{ secrets.TERRAFORM_GCP_CREDENTIALS }}
 
     steps:
       - name: Checkout Code
