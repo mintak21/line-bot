@@ -4,13 +4,13 @@ resource google_service_account sa_for_cloud_run {
   description  = "Service Account For Cloud Run ${var.service_name}"
 }
 
-resource google_project_iam_member project {
+resource google_project_iam_member cloud_run_admin_role {
   project = var.project_id
   role    = "roles/run.admin"
   member  = "serviceAccount:${google_service_account.sa_for_cloud_run.email}"
 }
 
-resource google_project_iam_member project {
+resource google_project_iam_member cloud_run_sa_role {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.sa_for_cloud_run.email}"
