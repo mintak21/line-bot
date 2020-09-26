@@ -63,3 +63,4 @@ substitutions:
 
 options:
   machineType: N1_HIGHCPU_32
+  substitution_option: ALLOW_LOOSE
