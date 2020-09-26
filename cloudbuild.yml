@@ -13,6 +13,7 @@ steps:
       - IMAGE_TAG_TEST=test_$_BUILD_SHA
 
   - id: build-go
+    waitFor: ["-"]
     name: gcr.io/kaniko-project/executor:latest
     args:
       - --destination=us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
