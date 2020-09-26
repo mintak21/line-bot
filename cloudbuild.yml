@@ -17,7 +17,7 @@ steps:
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - "--destination=us.gcr.io/$PROJECT_ID/linebot/python:$${DOCKER_IMAGE_TAG}"
+      - --destination="us.gcr.io/$PROJECT_ID/linebot/python:$$DOCKER_IMAGE_TAG"
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
