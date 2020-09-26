@@ -17,6 +17,10 @@ resource google_cloud_run_service this {
             "memory" = "128Mi"
           }
         }
+        env {
+          name  = "PROJECT_ID"
+          value = "mintak"
+        }
       }
       timeout_seconds      = "30"
       service_account_name = google_service_account.sa_for_cloud_run.email
@@ -31,13 +35,21 @@ resource google_cloud_run_service this {
 
   metadata {
     labels = {
-      "environment" = "production"
-      "tier"        = "backend"
+      "cloud.googleapis.com/location" = var.gcp_region
+      "environment"                   = "production"
+      "tier"                          = "backend"
     }
   }
 
   traffic {
     percent         = 100
     latest_revision = true
+  }
+
+  lifecycle {
+    ignore_changes = [
+      template.0.metadata.0.annotations,
+      template.0.spec.0.containers.0.image,
+    ]
   }
 }
