@@ -19,7 +19,7 @@ steps:
       - --dockerfile=deployment/dockerfile/go/Dockerfile
       - --context=.
     env:
-      - TAG2=test_$BUILD_SHA
+      - TAG2=test_$_BUILD_SHA
 
   - id: Deploy To Cloud Run
     waitFor:
@@ -48,6 +48,6 @@ options:
   machineType: N1_HIGHCPU_32
   env:
     - REGION=us-west1
-    - TAG=$BRANCH_$BUILD_SHA
+    - TAG=$_BRANCH_$_BUILD_SHA
     - SERVICE_NAME=mintaklinebot
     - KANIKO_CACHE_TTL=336h
