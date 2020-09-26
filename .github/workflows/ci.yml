@@ -98,3 +98,85 @@ jobs:
           image-name: ${{ steps.build.outputs.tag }}
           run-quality-checks: true
           severity-threshold: HIGH
+
+  terraform-ci:
+    name: Terraform Plan
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout Code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.3
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        continue-on-error: true
+
+      - name: TFLint
+        id: lint
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: ./environments/${{ matrix.env }}
+          reporter: github-pr-review
+          filter_mode: nofilter
+          fail_on_error: true
+
+      - name: TF Security
+        id: sec
+        uses: reviewdog/action-tfsec@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: ./environments/${{ matrix.env }}
+          reporter: github-pr-review
+          filter_mode: nofilter
+          fail_on_error: true
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - uses: actions/github-script@0.9.0
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `## \`Plan Result\`
+            #### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`terraform\n${{ steps.plan.outputs.stdout }}\`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })

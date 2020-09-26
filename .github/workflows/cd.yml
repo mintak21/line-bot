@@ -9,12 +9,36 @@ on:
 env:
   GCLOUD_VERSION: 311.0.0
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  RUN_REGION: us-central1
-  SERVICE_NAME: helloworld-nodejs
 
 jobs:
-  build:
+  terraform-apply:
+    name: Create GCP Resources
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout Code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.3
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+
+  build-and-deploy:
     name: Build And Push Container Registry
+    needs: [terraform-apply]
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout code
