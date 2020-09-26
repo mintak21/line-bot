@@ -57,6 +57,3 @@ substitutions:
   _SERVICE_REGION: us-west1
   _SERVICE_NAME: mintaklinebot
   _KANIKO_CACHE_TTL: 360h
-
-options:
-  machineType: N1_HIGHCPU_32
