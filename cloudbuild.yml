@@ -4,7 +4,7 @@ steps:
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$_BRANCH_$_BUILD_SHA
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_BRANCH}-${_BUILD_SHA}
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
