@@ -2,7 +2,7 @@ options:
   machineType: N1_HIGHCPU_32
   env:
     - REGION=us-west1
-    - TAG=$BRANCH_NAME-$SHORT_SHA
+    - TAG=$SHORT_SHA
     - SERVICE_NAME=mintaklinebot
     - KANIKO_CACHE_TTL=336h
 logsBucket: gs://cloudbuildlog-2x
@@ -10,22 +10,22 @@ steps:
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$${TAG2}
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$${TAG}
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
       - --context=.
-    env:
-      - "TAG2=$BRANCH_NAME_$SHORT_SHA"
 
   - id: build-go
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$${TAG}
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:$${TAG2}
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/go/Dockerfile
       - --context=.
+    env:
+      - TAG2=test_$SHORT_SHA
 
   - id: Deploy To Cloud Run
     waitFor:
@@ -36,7 +36,7 @@ steps:
     args:
       - run
       - deploy
-      - $SERVICE_NAME
+      - $${SERVICE_NAME}
       - --image
       - us.gcr.io/$PROJECT_ID/linebot/python:$${TAG}
       - --region
