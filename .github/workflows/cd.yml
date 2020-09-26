@@ -37,4 +37,7 @@ jobs:
       - name: Cloud Build
         id: cloud-build
         run: |-
-          gcloud builds submit --config cloudbuild.yml --substitutions _DOCKER_IMAGE_TAG=${{ steps.version.outputs.source_branch }}-${{ github.sha }}
+          gcloud builds submit \
+          --config cloudbuild.yml \
+          --substitutions _DOCKER_IMAGE_TAG=${{ steps.version.outputs.source_branch }}-${{ github.sha }} \
+          --gcs-source-staging-dir gs://mintak_cloudbuild/source
