@@ -2,14 +2,43 @@ import logging
 import os
 
 from flask import Flask, abort, request
+from google.cloud import secretmanager
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+
+def kms_secret(secret_id, version_id):
+    """
+    Access the payload for the given secret version if one exists. The version
+    can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
+    """
+
+    project_id = os.getenv('PROJECT_ID')
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+
+    # Access the secret version
+    client = secretmanager.SecretManagerServiceClient()
+    response = client.access_secret_version(request={'name': name})
+
+    return response.payload.data.decode('UTF-8')
+
+
+def env_secret(key):
+    return os.getenv(key)
+
+
+def secret(secret_key):
+    if os.getenv('SECRET_TYPE') == 'KMS':
+        return kms_secret(secret_id=kms_secret, version_id='latest')
+    else:
+        return env_secret(key=secret_key)
+
+
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
-handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
-line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
+handler = WebhookHandler(secret('CHANNEL_SECRET'))
+line_bot_api = LineBotApi(secret('CHANNEL_ACCESS_TOKEN'))
 
 
 @app.route('/health', methods=['GET'])
