@@ -1,35 +1,25 @@
 # See. https://github.com/GoogleCloudPlatform/cloud-code-samples/blob/f9352f922501aea9ae0f626bf15b6a24ac72b2f9/cloudbuild.tmpl.yaml
 logsBucket: gs://cloudbuildlog-2x
 steps:
-  - name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: "bash"
-    args:
-      - "-eEuo"
-      - "pipefail"
-      - "-c"
-      - |-
-        echo "docker image tag test3 is :: ${_DOCKER_IMAGE_TAG}"
-        echo "docker image tag test4 is :: $_DOCKER_IMAGE_TAG"
+  # - id: build-python
+  #   name: gcr.io/kaniko-project/executor:latest
+  #   args:
+  #     - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
+  #     - --cache=true
+  #     - --cache-ttl=${_KANIKO_CACHE_TTL}
+  #     - --dockerfile=deployment/dockerfile/python/Dockerfile
+  #     - --context=.
+  #   env:
+  #     - IMAGE_TAG_TEST=test_$_BUILD_SHA
 
-  - id: build-python
-    name: gcr.io/kaniko-project/executor:latest
-    args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
-      - --cache=true
-      - --cache-ttl=${_KANIKO_CACHE_TTL}
-      - --dockerfile=deployment/dockerfile/python/Dockerfile
-      - --context=.
-    env:
-      - IMAGE_TAG_TEST=test_$_BUILD_SHA
-
-  - id: build-go
-    name: gcr.io/kaniko-project/executor:latest
-    args:
-      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
-      - --cache=true
-      - --cache-ttl=${_KANIKO_CACHE_TTL}
-      - --dockerfile=deployment/dockerfile/go/Dockerfile
-      - --context=.
+  # - id: build-go
+  #   name: gcr.io/kaniko-project/executor:latest
+  #   args:
+  #     - --destination=us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
+  #     - --cache=true
+  #     - --cache-ttl=${_KANIKO_CACHE_TTL}
+  #     - --dockerfile=deployment/dockerfile/go/Dockerfile
+  #     - --context=.
 
   - id: Deploy To Cloud Run
     waitFor:
