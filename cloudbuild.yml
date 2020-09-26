@@ -24,7 +24,7 @@ steps:
   - id: Deploy To Cloud Run
     waitFor:
       - build-python
-      - build-go
+      #- build-go
     name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: gcloud
     args:
