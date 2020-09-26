@@ -11,17 +11,23 @@ steps:
         echo "docker image tag test is :: $$DOCKER_IMAGE_TAG"
         echo "docker image tag test2 is :: $${DOCKER_IMAGE_TAG}"
         echo $$DOCKER_IMAGE_TAG
+        echo $IMAGE_TAG_TEST
+        echo $$IMAGE_TAG_TEST
         echo "docker image tag test3 is :: ${DOCKER_IMAGE_TAG}"
         echo "docker image tag test4 is :: $DOCKER_IMAGE_TAG"
+    env:
+      - IMAGE_TAG_TEST=test_$_BUILD_SHA
 
   - id: build-python
     name: gcr.io/kaniko-project/executor:latest
     args:
-      - --destination="us.gcr.io/$PROJECT_ID/linebot/python:$$DOCKER_IMAGE_TAG"
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:$IMAGE_TAG_TEST
       - --cache=true
       - --cache-ttl=336h
       - --dockerfile=deployment/dockerfile/python/Dockerfile
       - --context=.
+    env:
+      - IMAGE_TAG_TEST=test_$_BUILD_SHA
 
   - id: build-go
     name: gcr.io/kaniko-project/executor:latest
