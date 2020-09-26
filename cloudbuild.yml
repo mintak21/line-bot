@@ -47,5 +47,5 @@ steps:
       - SERVICE_NAME=mintaklinebot
 
 images:
-  - us.gcr.io/$PROJECT_ID/linebot/python
+  - us.gcr.io/$PROJECT_ID/linebot/python:$SHORT_SHA
   - us.gcr.io/$PROJECT_ID/linebot/go
