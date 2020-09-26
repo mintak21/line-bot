@@ -8,10 +8,15 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 
-def kms_secret(secret_id, version_id):
-    """
-    Access the payload for the given secret version if one exists. The version
-    can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
+def google_secret(secret_id, version_id):
+    """Get Secret From Google Secret Manager
+
+    Args:
+        secret_id (string): Secret ID
+        version_id (string): Version ID. You can Use "latest" alias For Getting latest Version
+
+    Returns:
+        string: Secret Law Value
     """
 
     project_id = os.getenv('PROJECT_ID')
@@ -29,8 +34,8 @@ def env_secret(key):
 
 
 def secret(secret_key):
-    if os.getenv('SECRET_TYPE') == 'KMS':
-        return kms_secret(secret_id=kms_secret, version_id='latest')
+    if os.getenv('SECRET_TYPE') == 'GOOGLE_SECRET_MANAGER':
+        return google_secret(secret_id=secret_key, version_id='latest')
     else:
         return env_secret(key=secret_key)
 

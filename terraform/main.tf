@@ -21,6 +21,10 @@ resource google_cloud_run_service this {
           name  = "PROJECT_ID"
           value = "mintak"
         }
+        env {
+          name  = "SECRET_TYPE"
+          value = "GOOGLE_SECRET_MANAGER"
+        }
       }
       timeout_seconds      = "30"
       service_account_name = google_service_account.sa_for_cloud_run.email
