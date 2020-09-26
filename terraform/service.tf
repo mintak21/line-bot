@@ -15,6 +15,7 @@ locals {
     "cloudbuild.googleapis.com",        # Cloud Build API
     "compute.googleapis.com",           # Compute Engine API
     "storage-component.googleapis.com", # Cloud Storage API
+    "secretmanager.googleapis.com",     # Secret Manager API
   ]
 }
 
