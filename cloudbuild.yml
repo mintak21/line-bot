@@ -38,9 +38,10 @@ steps:
       - --platform
       - managed
 
-images:
-  - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
-  - us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
+# kanikoを使っている場合は、images定義は不要（See. https://github.com/GoogleCloudPlatform/cloud-builders-community/issues/212）
+# images:
+#   - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
+#   - us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
 
 substitutions:
   _DOCKER_IMAGE_TAG: latest
