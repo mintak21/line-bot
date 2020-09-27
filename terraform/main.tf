@@ -6,7 +6,7 @@ resource google_cloud_run_service this {
   template {
     spec {
       containers {
-        image = "gcr.io/cloudrun/hello"
+        image = "gcr.io/cloudrun/hello" # deploy image by cloudbuild
         resources {
           limits = {
             "cpu"    = "1"
