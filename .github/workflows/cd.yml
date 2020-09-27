@@ -7,8 +7,9 @@ on:
       - cloudrun
 
 env:
+  TERRAFORM_VERSION: 0.13.3
   GCLOUD_VERSION: 311.0.0
-  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  PROJECT_ID: mintak
 
 jobs:
   terraform-apply:
@@ -28,7 +29,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 0.13.3
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
       - name: Terraform Init
         id: init
@@ -58,7 +59,7 @@ jobs:
         with:
           version: ${{ env.GCLOUD_VERSION }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: ${{ secrets.GCP_PROJECT }}
+          project_id: ${{ env.PROJECT_ID }}
 
       - name: Cloud Build
         id: cloud-build

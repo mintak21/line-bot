@@ -8,6 +8,7 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
+  TERRAFORM_VERSION: 0.13.3
 
 jobs:
   go-lint:
@@ -116,7 +117,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 0.13.3
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
       - name: Terraform Format
         id: fmt
