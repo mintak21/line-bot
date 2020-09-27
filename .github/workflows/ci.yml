@@ -102,10 +102,13 @@ jobs:
 
   terraform-ci:
     name: Terraform Plan
+    strategy:
+      matrix:
+        env: [cloudrun]
     runs-on: ubuntu-18.04
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./terraform/${{ matrix.env }}
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.TERRAFORM_GCP_CREDENTIALS }}
 
@@ -138,7 +141,7 @@ jobs:
         uses: reviewdog/action-tflint@master
         with:
           github_token: ${{ secrets.github_token }}
-          working_directory: ./
+          working_directory: ./${{ matrix.env }}
           reporter: github-pr-review
           filter_mode: nofilter
           fail_on_error: true
@@ -148,7 +151,7 @@ jobs:
         uses: reviewdog/action-tfsec@v1
         with:
           github_token: ${{ secrets.github_token }}
-          working_directory: ./
+          working_directory: ./${{ matrix.env }}
           reporter: github-pr-review
           filter_mode: nofilter
           fail_on_error: false
@@ -163,7 +166,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `## \`Plan Result\`
+            const output = `## \`Plan Result Of ${{ matrix.env }}\`
             #### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}

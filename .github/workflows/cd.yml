@@ -14,10 +14,13 @@ env:
 jobs:
   terraform-apply:
     name: Create GCP Resources
+    strategy:
+      matrix:
+        env: [cloudrun]
     runs-on: ubuntu-18.04
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./terraform/${{ matrix.env }}
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.TERRAFORM_GCP_CREDENTIALS }}
 
