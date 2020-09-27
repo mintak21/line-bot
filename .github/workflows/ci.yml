@@ -141,7 +141,7 @@ jobs:
         uses: reviewdog/action-tflint@master
         with:
           github_token: ${{ secrets.github_token }}
-          working_directory: ./${{ matrix.env }}
+          working_directory: ./
           reporter: github-pr-review
           filter_mode: nofilter
           fail_on_error: true
@@ -151,7 +151,7 @@ jobs:
         uses: reviewdog/action-tfsec@v1
         with:
           github_token: ${{ secrets.github_token }}
-          working_directory: ./${{ matrix.env }}
+          working_directory: ./
           reporter: github-pr-review
           filter_mode: nofilter
           fail_on_error: false
