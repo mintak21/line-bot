@@ -92,6 +92,7 @@ heroku maintenance:on --app ${APP_NAME}
 ### Reference
 
 - [How To Select Serverless Architecture](https://cloud.google.com/serverless-options/?hl=ja)
+- [CloudBuildとTerraformを使ってFunctionsテスト](https://cloud.google.com/solutions/system-testing-cloud-functions-using-cloud-build-and-terraform?hl=ja#creating_test_infrastructure_with_terraform)
 
 ## 3. GCP Cloud Run
 

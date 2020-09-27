@@ -1,6 +1,6 @@
 terraform {
   backend gcs {
     bucket = "mintak-tfstate"
-    prefix = "linebot/run"
+    prefix = "linebot/functions"
   }
 }
