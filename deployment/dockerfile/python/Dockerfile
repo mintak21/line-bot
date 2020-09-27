@@ -8,9 +8,9 @@ COPY --from=builder /usr/local/lib/python3.7/site-packages /usr/lib/python3.7/.
 
 WORKDIR /app
 COPY --from=builder /usr/local/bin/gunicorn ./gunicorn
-COPY example/python/server.py ./server.py
+COPY example/python/main.py ./main.py
 COPY example/python/config.py ./config.py
 
 ENV PYTHONDONTWRITEBYTECODE 1
 
-CMD ["gunicorn", "server:app", "-c", "config.py"]
+CMD ["gunicorn", "main:app", "-c", "config.py"]
