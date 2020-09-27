@@ -80,7 +80,18 @@ heroku maintenance:on --app ${APP_NAME}
 - [Contextを指定できない問題](https://devcenter.heroku.com/articles/build-docker-images-heroku-yml#known-issues-and-limitations)
 - [PythonのMultiStageBuild](https://ep2019.europython.eu/media/conference/slides/PAgMWev-securely-executing-python-machine-learning-models-with-distrol_lAycpRP.pdf)
 
-## 2. AWS Lambda
+## 2. GCP Cloud Functions
+
+### Tips
+
+- `CloudRun`との使い分けはざっくり以下
+  - KNative上でStatelessContainerを動かしたい場合は`CloudRun`
+  - `Pub/Sub`や`Firebase`をトリガーとしたい場合は`CloudFunctions`
+  - そもそも`CloudFunctions`で用意されていないランタイムで動かしたい場合は自動的に`CloudRun`
+
+### Reference
+
+- [How To Select Serverless Architecture](https://cloud.google.com/serverless-options/?hl=ja)
 
 ## 3. GCP Cloud Run
 
@@ -100,6 +111,8 @@ gcloud builds submit --config cloudbuild.yml --substitutions _DOCKER_IMAGE_TAG=$
 
 - CloudBuildからCloudRunへデプロイするにあたって必要な権限は、[Cloud Run 管理者とサービスアカウントユーザーロールが必要](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run?hl=ja#continuous-iam)
 - Secret情報の保管は[SecretManagerを使う](https://cloud.google.com/run/docs/configuring/environment-variables?hl=ja)ことが推奨されている。
+- 公開アクセスを許可するためには、Cloud Run起動元ロールをallUsersに与える必要がある（[参照](https://cloud.google.com/run/docs/authenticating/public?hl=ja)）
+- フルマネージドで利用するケースでは、NetworkFirewallを設定するユースケースは見当たらない
 
 ### Limitations
 
