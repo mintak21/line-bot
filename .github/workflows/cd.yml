@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - cloudrun
 
 env:
   TERRAFORM_VERSION: 0.13.3
