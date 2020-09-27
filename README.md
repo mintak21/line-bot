@@ -78,7 +78,48 @@ heroku maintenance:on --app ${APP_NAME}
 - [環境変数の設定](https://devcenter.heroku.com/articles/config-vars)
 - [Nginxリバースプロキシの設定方法](https://help.heroku.com/YTWRHLVH/how-do-i-make-my-nginx-proxy-connect-to-a-heroku-app-behind-heroku-ssl)
 - [Contextを指定できない問題](https://devcenter.heroku.com/articles/build-docker-images-heroku-yml#known-issues-and-limitations)
+- [PythonのMultiStageBuild](https://ep2019.europython.eu/media/conference/slides/PAgMWev-securely-executing-python-machine-learning-models-with-distrol_lAycpRP.pdf)
 
-## 2. AWS Lambda
+## 2. GCP Cloud Functions
+
+### Tips
+
+- `CloudRun`との使い分けはざっくり以下
+  - KNative上でStatelessContainerを動かしたい場合は`CloudRun`
+  - `Pub/Sub`や`Firebase`をトリガーとしたい場合は`CloudFunctions`
+  - そもそも`CloudFunctions`で用意されていないランタイムで動かしたい場合は自動的に`CloudRun`
+
+### Reference
+
+- [How To Select Serverless Architecture](https://cloud.google.com/serverless-options/?hl=ja)
 
 ## 3. GCP Cloud Run
+
+`master`ブランチへのpushを契機にGithubActionsのワークフローから、
+CloudBuildでイメージビルド・レジストリpush・CloudRunデプロイを実施する。
+
+リソースは`Terraform`で作成する。
+
+### Build and Deploy
+
+```bash
+# DeployはCloudBuildから行うため、yml内で定義
+gcloud builds submit --config cloudbuild.yml --substitutions _DOCKER_IMAGE_TAG=${TAG}
+```
+
+### Tips
+
+- CloudBuildからCloudRunへデプロイするにあたって必要な権限は、[Cloud Run 管理者とサービスアカウントユーザーロールが必要](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run?hl=ja#continuous-iam)
+- Secret情報の保管は[SecretManagerを使う](https://cloud.google.com/run/docs/configuring/environment-variables?hl=ja)ことが推奨されている。
+- 公開アクセスを許可するためには、Cloud Run起動元ロールをallUsersに与える必要がある（[参照](https://cloud.google.com/run/docs/authenticating/public?hl=ja)）
+- フルマネージドで利用するケースでは、NetworkFirewallを設定するユースケースは見当たらない
+
+### Limitations
+
+- CloudBuildAPIを有効にした時点で、CloudBuildが使用するサービスアカウントは`[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`で[固定](https://cloud.google.com/cloud-build/docs/securing-builds/set-service-account-permissions)で作成される。
+しかし、このアカウントをTerraformで扱うことはできない（[Issue](https://github.com/hashicorp/terraform-provider-google/issues/5359)が上がっている）ので、CloudRun権限追加は手動で行う必要がある。
+
+### Reference
+
+- [gcloud builds submit](https://cloud.google.com/sdk/gcloud/reference/builds/submit?hl=ja)
+- [gcloud run deploy](https://cloud.google.com/sdk/gcloud/reference/run/deploy)

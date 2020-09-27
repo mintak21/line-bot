@@ -1,0 +1,51 @@
+# See. https://github.com/GoogleCloudPlatform/cloud-code-samples/blob/f9352f922501aea9ae0f626bf15b6a24ac72b2f9/cloudbuild.tmpl.yaml
+logsBucket: gs://mintak_cloudbuild/log
+steps:
+  - id: build-python
+    name: gcr.io/kaniko-project/executor:latest
+    args:
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
+      - --cache=true
+      - --cache-ttl=${_KANIKO_CACHE_TTL}
+      - --dockerfile=deployment/dockerfile/python/Dockerfile
+      - --context=.
+    env:
+      - IMAGE_TAG_TEST=test_$_BUILD_SHA
+
+  - id: build-go
+    waitFor: ["-"]
+    name: gcr.io/kaniko-project/executor:latest
+    args:
+      - --destination=us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
+      - --cache=true
+      - --cache-ttl=${_KANIKO_CACHE_TTL}
+      - --dockerfile=deployment/dockerfile/go/Dockerfile
+      - --context=.
+
+  - id: Deploy To Cloud Run
+    waitFor:
+      - build-python
+      - build-go
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE_NAME}
+      - --image
+      - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
+      - --region
+      - ${_SERVICE_REGION}
+      - --platform
+      - managed
+
+# kanikoを使っている場合は、images定義は不要（See. https://github.com/GoogleCloudPlatform/cloud-builders-community/issues/212）
+# images:
+#   - us.gcr.io/$PROJECT_ID/linebot/python:${_DOCKER_IMAGE_TAG}
+#   - us.gcr.io/$PROJECT_ID/linebot/go:${_DOCKER_IMAGE_TAG}
+
+substitutions:
+  _DOCKER_IMAGE_TAG: latest
+  _SERVICE_REGION: us-west1
+  _SERVICE_NAME: mintaklinebot
+  _KANIKO_CACHE_TTL: 360h

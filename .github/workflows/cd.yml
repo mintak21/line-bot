@@ -1,0 +1,72 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  TERRAFORM_VERSION: 0.13.3
+  GCLOUD_VERSION: 311.0.0
+  PROJECT_ID: mintak
+
+jobs:
+  terraform-apply:
+    name: Create GCP Resources
+    strategy:
+      matrix:
+        env: [cloudrun]
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: ./terraform/${{ matrix.env }}
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.TERRAFORM_GCP_CREDENTIALS }}
+
+    steps:
+      - name: Checkout Code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+
+  build-and-deploy:
+    name: Build And Push Container Registry
+    needs: [terraform-apply]
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v2
+
+      - name: Get Version
+        id: version
+        run: |
+          echo ::set-output name=source_branch::${GITHUB_REF#refs/heads/}
+
+      - name: Setup GCloud
+        id: setup
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: ${{ env.GCLOUD_VERSION }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Cloud Build
+        id: cloud-build
+        run: |-
+          gcloud builds submit \
+          --config cloudbuild.yml \
+          --substitutions _DOCKER_IMAGE_TAG=${{ steps.version.outputs.source_branch }}-${{ github.sha }} \
+          --gcs-source-staging-dir gs://mintak_cloudbuild/source

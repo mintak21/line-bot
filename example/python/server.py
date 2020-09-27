@@ -2,14 +2,48 @@ import logging
 import os
 
 from flask import Flask, abort, request
+from google.cloud import secretmanager
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+
+def google_secret(secret_id, version_id):
+    """Get Secret From Google Secret Manager
+
+    Args:
+        secret_id (string): Secret ID
+        version_id (string): Version ID. You can Use "latest" alias For Getting latest Version
+
+    Returns:
+        string: Secret Law Value
+    """
+
+    project_id = os.getenv('PROJECT_ID')
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+
+    # Access the secret version
+    client = secretmanager.SecretManagerServiceClient()
+    response = client.access_secret_version(request={'name': name})
+
+    return response.payload.data.decode('UTF-8')
+
+
+def env_secret(key):
+    return os.getenv(key)
+
+
+def secret(secret_key):
+    if os.getenv('SECRET_TYPE') == 'GOOGLE_SECRET_MANAGER':
+        return google_secret(secret_id=secret_key, version_id='latest')
+    else:
+        return env_secret(key=secret_key)
+
+
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
-handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
-line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
+handler = WebhookHandler(secret('CHANNEL_SECRET'))
+line_bot_api = LineBotApi(secret('CHANNEL_ACCESS_TOKEN'))
 
 
 @app.route('/health', methods=['GET'])
