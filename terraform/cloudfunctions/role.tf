@@ -1,13 +1,13 @@
 resource google_service_account sa_for_cloudfunctions {
   account_id   = "functions-${var.service_name}"
-  display_name = "Service Account For Cloud Functions"
-  description  = "Service Account For Cloud Functions ${var.service_name}"
+  display_name = "CloudFunctions(${var.service_name}) service account"
+  description  = "CloudFunctions(${var.service_name})にて使用するサービスアカウント"
 }
 
 resource google_project_iam_custom_role role_for_cloudfunctions {
   role_id     = "functions_${var.service_name}"
-  title       = "Custom Role For Cloud Functions"
-  description = "Custom Role For Cloud Functions ${var.service_name}"
+  title       = "${var.service_name} CloudFunctions"
+  description = "Custom Role For Cloud Functions(${var.service_name})"
   permissions = [
     "cloudkms.cryptoKeyVersions.useToDecrypt",
   ]
@@ -20,6 +20,7 @@ resource google_project_iam_binding cloudfunctions_role {
   ]
 }
 
+# For Public Access
 data google_iam_policy invoker {
   binding {
     role = "roles/cloudfunctions.invoker"
