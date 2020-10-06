@@ -16,14 +16,14 @@ variable service_name {
   default     = "mintaklinebot"
 }
 
-variable channel_secret {
+variable plain_channel_secret {
   type        = string
-  description = "BOTのチャンネルシークレット(Encrypted)"
-  default     = "dummy"
+  description = "BOTのチャンネルシークレット(Plain)"
+  default     = "dummy" # Set By tfvars
 }
 
-variable channel_access_token {
+variable plain_channel_access_token {
   type        = string
-  description = "BOTのアクセストークン(Encrypted)"
-  default     = "dummy"
+  description = "BOTのアクセストークン(Plain)"
+  default     = "dummy" # Set By tfvars
 }
