@@ -1,7 +1,7 @@
 resource google_cloudfunctions_function this {
   name                  = var.service_name
   description           = "Serverless Linebot Backend"
-  runtime               = "python37" # Terraform Not Yet Support python38
+  runtime               = "python38" # Terraform Not Yet Support python38
   source_archive_bucket = google_storage_bucket.cloudfunctions_bucket.name
   source_archive_object = google_storage_bucket_object.source_archive.name
   service_account_email = google_service_account.sa_for_cloudfunctions.email
