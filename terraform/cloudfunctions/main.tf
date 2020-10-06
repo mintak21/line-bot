@@ -13,10 +13,10 @@ resource google_cloudfunctions_function this {
   entry_point         = "handle_cloudfunctions"
 
   environment_variables = {
-    PROJECT_ID           = var.project_id,
     SECRET_TYPE          = "KMS_ENCRYPTED_ENV",
-    CHANNEL_SECRET       = var.channel_secret,
-    CHANNEL_ACCESS_TOKEN = var.channel_access_token,
+    KEY_ID               = google_kms_crypto_key.service_key.id,
+    CHANNEL_SECRET       = google_kms_secret_ciphertext.channel_secret.ciphertext,
+    CHANNEL_ACCESS_TOKEN = google_kms_secret_ciphertext.channel_access_token.ciphertext,
   }
 
   labels = {
