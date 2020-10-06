@@ -25,7 +25,11 @@ data archive_file local_source_archive {
 }
 
 resource google_storage_bucket_object source_archive {
-  name   = "${var.service_name}.zip"
-  bucket = google_storage_bucket.cloudfunctions_bucket.name
-  source = data.archive_file.local_source_archive.output_path
+  # オブジェクト名にアーカイブファイルのsha256を含めることで、cloudfunctions.source_archive_objectに変更として検知させ、デプロイするように工夫
+  name                = "${var.service_name}_substr(${data.archive_file.local_source_archive.output_base64sha256}, 0, 32).zip"
+  bucket              = google_storage_bucket.cloudfunctions_bucket.name
+  source              = data.archive_file.local_source_archive.output_path
+  content_disposition = "attachment"
+  content_encoding    = "gzip"
+  content_type        = "application/zip"
 }
