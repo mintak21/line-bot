@@ -60,7 +60,7 @@ def secret(secret_key):
     elif os.getenv('SECRET_TYPE') == 'KMS_ENCRYPTED_ENV':
         return google_kms_encrypted_env_secret(secret_key=secret_key)
     else:
-        return plain_env_secret(key=secret_key)
+        return plain_env_secret(secret_key=secret_key)
 
 
 app = Flask(__name__)
