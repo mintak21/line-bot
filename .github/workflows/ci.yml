@@ -8,7 +8,7 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  TERRAFORM_VERSION: 0.13.3
+  TERRAFORM_VERSION: 0.13.4
 
 jobs:
   go-lint:

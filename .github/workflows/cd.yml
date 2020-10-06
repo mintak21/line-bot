@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  TERRAFORM_VERSION: 0.13.3
+  TERRAFORM_VERSION: 0.13.4
   GCLOUD_VERSION: 311.0.0
   PROJECT_ID: mintak
 
