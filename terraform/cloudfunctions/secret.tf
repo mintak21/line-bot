@@ -12,6 +12,9 @@ resource google_kms_crypto_key service_key {
     algorithm        = "GOOGLE_SYMMETRIC_ENCRYPTION"
     protection_level = "HSM"
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource google_kms_secret_ciphertext channel_secret {
