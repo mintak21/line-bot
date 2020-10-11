@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - ingress.yaml
+
+images:
+  - name: us.gcr.io/mintak/linebot/python
+    newTag: gke-202010090105
+    # newTag: master-4edd4b8bf95736af0ffb052e95e7026ac392e14c
+
+configMapGenerator:
+  - name: linebot-api
+    literals:
+      - SECRET_TYPE=PLAIN_ENV
+      - CHANNEL_SECRET=dummy
+      - CHANNEL_ACCESS_TOKEN=dummy

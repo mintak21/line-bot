@@ -1,6 +1,6 @@
 resource google_kms_key_ring service_keyring {
   name     = "cloudfunction-keyring"
-  location = var.gcp_region
+  location = var.function_location
 }
 
 resource google_kms_crypto_key service_key {

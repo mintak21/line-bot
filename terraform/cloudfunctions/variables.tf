@@ -4,12 +4,6 @@ variable project_id {
   default     = "mintak"
 }
 
-variable gcp_region {
-  type        = string
-  description = "リージョン"
-  default     = "us-central1"
-}
-
 variable service_name {
   type        = string
   description = "サービス名"
