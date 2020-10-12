@@ -62,7 +62,7 @@ resource google_container_cluster vpc_native_cluster {
   timeouts {
     create = "15m"
     update = "10m"
-    delete = "10m"
+    delete = "15m"
   }
 
   depends_on = [
@@ -80,8 +80,9 @@ resource google_container_node_pool vpc_native_cluster_nodes {
   node_count = 1
 
   node_config {
-    preemptible     = true
+    image_type      = "COS_CONTAINERD"
     machine_type    = var.machine_type
+    preemptible     = true
     service_account = google_service_account.sa_for_gke.email
 
     metadata = {
@@ -97,7 +98,7 @@ resource google_container_node_pool vpc_native_cluster_nodes {
 
   autoscaling {
     min_node_count = 0
-    max_node_count = 2
+    max_node_count = 3
   }
 
   management {
