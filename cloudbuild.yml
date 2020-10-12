@@ -9,8 +9,6 @@ steps:
       - --cache-ttl=${_KANIKO_CACHE_TTL}
       - --dockerfile=deployment/dockerfile/python/Dockerfile
       - --context=.
-    env:
-      - IMAGE_TAG_TEST=test_$_BUILD_SHA
 
   - id: build-go
     waitFor: ["-"]
