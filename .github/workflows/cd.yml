@@ -1,4 +1,4 @@
-name: Build and Deploy to Cloud Run
+name: Terraform Apply / Build / Deploy to Cloud Run
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ jobs:
     name: Create GCP Resources
     strategy:
       matrix:
-        env: [cloudrun, cloudfunctions]
+        env: [cloudrun, cloudfunctions, gke]
     runs-on: ubuntu-18.04
     defaults:
       run:
