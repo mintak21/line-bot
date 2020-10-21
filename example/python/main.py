@@ -1,8 +1,9 @@
+import base64
 import logging
 import os
 
-from flask import Flask, abort, request
-from google.cloud import secretmanager
+from flask import Flask, abort, escape, jsonify, request
+from google.cloud import kms, secretmanager
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
@@ -29,15 +30,37 @@ def google_secret(secret_id, version_id):
     return response.payload.data.decode('UTF-8')
 
 
-def env_secret(key):
-    return os.getenv(key)
+def google_kms_encrypted_env_secret(secret_key: str) -> str:
+    """Decrypt the ciphertext using the symmetric key
+
+    Args:
+        secret_key (string): Environment key that configures ciphertext
+
+    Returns:
+        DecryptResponse: Response including plaintext.
+    """
+
+    key_id = os.getenv('KEY_ID')
+    ciphertext = os.getenv(secret_key)
+
+    client = kms.KeyManagementServiceClient()
+    # Call the API.
+    decrypt_response = client.decrypt(
+        request={'name': key_id, 'ciphertext': base64.b64decode(ciphertext)})
+    return decrypt_response.plaintext.decode()
+
+
+def plain_env_secret(secret_key):
+    return os.getenv(secret_key)
 
 
 def secret(secret_key):
     if os.getenv('SECRET_TYPE') == 'GOOGLE_SECRET_MANAGER':
         return google_secret(secret_id=secret_key, version_id='latest')
+    elif os.getenv('SECRET_TYPE') == 'KMS_ENCRYPTED_ENV':
+        return google_kms_encrypted_env_secret(secret_key=secret_key)
     else:
-        return env_secret(key=secret_key)
+        return plain_env_secret(secret_key=secret_key)
 
 
 app = Flask(__name__)
@@ -59,10 +82,11 @@ def callback():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        app.logger.warn('Invalid signature. Please check your channel access token/channel secret.')
+        app.logger.warn(
+            'Invalid signature. Please check your channel access token/channel secret.')
         abort(400)
 
-    return 'OK'
+    return jsonify({'message': 'OK'})
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -76,6 +100,10 @@ def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text))
+
+
+def handle_cloudfunctions(request):
+    return escape(callback())
 
 
 if __name__ == "__main__":

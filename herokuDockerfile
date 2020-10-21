@@ -12,4 +12,4 @@ RUN pip3 install -r /usr/local/application/requirements.txt && \
 # EXPOSE 5000
 
 WORKDIR /usr/local/application
-CMD ["gunicorn", "server:app", "-c", "config.py"]
+CMD ["gunicorn", "main:app", "-c", "config.py"]
