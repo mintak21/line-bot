@@ -104,7 +104,7 @@ jobs:
     name: Terraform Plan
     strategy:
       matrix:
-        env: [cloudrun]
+        env: [cloudrun, cloudfunctions]
     runs-on: ubuntu-18.04
     defaults:
       run:
