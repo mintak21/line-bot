@@ -1,9 +1,7 @@
 name: Build and Deploy to Cloud Run
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 env:
   TERRAFORM_VERSION: 0.13.4
@@ -15,7 +13,7 @@ jobs:
     name: Create GCP Resources
     strategy:
       matrix:
-        env: [cloudrun]
+        env: [cloudrun, cloudfunctions]
     runs-on: ubuntu-18.04
     defaults:
       run:
