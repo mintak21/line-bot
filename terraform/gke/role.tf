@@ -12,7 +12,9 @@ resource google_service_account sa_for_gke {
 }
 
 resource google_project_iam_custom_role role_for_gke {
-  role_id     = "gke_${var.service_name}"
+  # ロール削除してから37日間は、同一IDのカスタムロールを作成することができない
+  # See. https://cloud.google.com/iam/docs/creating-custom-roles#deleting-custom-role
+  role_id     = "gke_${var.service_name}_${random_string.role_prefix.result}"
   title       = "${var.service_name} Kubernetes Engine"
   description = "Custom Role For Google Kubernetes Engine (${var.service_name})"
   # 最低限、monitoring.viewer、monitoring.metricWriter、logging.logWriterの3つのロール（に紐づく権限）が必要
@@ -55,4 +57,12 @@ resource google_project_iam_custom_role role_for_gke {
     "storage.objects.get",
     "storage.objects.list",
   ]
+}
+
+resource random_string role_prefix {
+  length  = 4
+  upper   = false
+  lower   = true
+  number  = true
+  special = false
 }
