@@ -5,7 +5,7 @@ on:
 
 env:
   TERRAFORM_VERSION: 0.13.4
-  GCLOUD_VERSION: 344.0.0
+  GCLOUD_VERSION: 315.0.0
   PROJECT_ID: mintak
 
 jobs:
