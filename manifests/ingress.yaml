@@ -17,6 +17,9 @@ kind: BackendConfig
 metadata:
   name: linebot-backendconfig
 spec:
+  healthCheck:
+    type: HTTP
+    requestPath: /health
   securityPolicy:
     name: mintaklinebot-security-policy
 ---

@@ -40,14 +40,6 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 3
             periodSeconds: 5
-          # IngressのヘルスチェックのパスはreadinessProbeを見るため、カスタマイズのために設定している、本来はliveness Probeのみ or 違うパスの指定をすべき
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 5000
-              scheme: HTTP
-            initialDelaySeconds: 3
-            periodSeconds: 5
           envFrom:
             - configMapRef:
                 name: linebot-api
