@@ -3,14 +3,24 @@ kind: Ingress
 metadata:
   name: linebot
   annotations:
+    # 前提：Managed CertificateとSSL PolicyはあらかじめTerraformで作成済
+    networking.gke.io/v1beta1.FrontendConfig: mintaklinebot-frontendconfig
+    ingress.gcp.kubernetes.io/pre-shared-cert: mintaklinebot-managed-cert
     kubernetes.io/ingress.global-static-ip-name: mintaklinebot-external-ip
-    # networking.gke.io/v1beta1.FrontendConfig: frontendconfig
+    kubernetes.io/ingress.allow-http: "false"
   labels:
     app: linebot
 spec:
   backend:
     serviceName: linebot-backend
     servicePort: 80
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: mintaklinebot-frontendconfig
+spec:
+  sslPolicy: mintaklinebot-ingress-ssl-policy
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
