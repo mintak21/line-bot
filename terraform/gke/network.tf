@@ -33,6 +33,22 @@ resource google_compute_global_address application_static_ip_address {
   ip_version  = "IPV4"
 }
 
+resource google_dns_managed_zone public_dns_zone {
+  name        = "${var.service_name}-zone"
+  dns_name    = var.service_domain
+  description = "Public DNS Zone for ${var.service_name}"
+  visibility  = "public"
+}
+
+resource google_dns_record_set dns_a_record {
+  name         = google_dns_managed_zone.public_dns_zone.dns_name
+  managed_zone = google_dns_managed_zone.public_dns_zone.name
+  type         = "A"
+  ttl          = 180
+
+  rrdatas = [google_compute_global_address.application_static_ip_address.address]
+}
+
 resource google_compute_ssl_policy ssl_policy {
   name            = "${var.service_name}-ingress-ssl-policy"
   description     = "SSL Policy for ${var.service_name}"

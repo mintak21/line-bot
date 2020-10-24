@@ -4,6 +4,12 @@ variable service_name {
   default     = "mintaklinebot"
 }
 
+variable service_domain {
+  type        = string
+  description = "DNSへ登録するドメイン"
+  default     = "mintak.work."
+}
+
 variable cluster_location {
   type        = string
   description = "GKEロケーション"
@@ -43,5 +49,8 @@ variable vpc_subnetwork_primary_ip_range {
 variable ip_whitelists {
   type        = list(string)
   description = "接続許可するIPアドレスリスト"
-  default     = ["220.215.227.226/32"]
+  default = [
+    "220.215.227.226/32",
+    "111.239.191.38", # 渋谷のIP
+  ]
 }
