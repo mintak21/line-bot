@@ -83,3 +83,15 @@ resource google_compute_security_policy security_policy {
     description = "White IP Address Lists"
   }
 }
+
+resource google_compute_managed_ssl_certificate ingress_cert {
+  provider = google-beta
+
+  name        = "${var.service_name}-managed-cert"
+  description = "Google Managed Certificate For ${var.service_name}"
+  type        = "MANAGED"
+
+  managed {
+    domains = [var.service_domain]
+  }
+}
