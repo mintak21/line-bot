@@ -22,6 +22,12 @@ spec:
     requestPath: /health
   securityPolicy:
     name: mintaklinebot-security-policy
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false
 ---
 apiVersion: v1
 kind: Service
