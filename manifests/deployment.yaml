@@ -5,7 +5,7 @@ metadata:
   labels:
     app: linebot
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: linebot
@@ -54,8 +54,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: linebot
-  minReplicas: 1
-  maxReplicas: 3
+  minReplicas: 2
+  maxReplicas: 6
   metrics:
     - type: Resource
       resource:
