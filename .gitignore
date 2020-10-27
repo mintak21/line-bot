@@ -26,3 +26,6 @@
 
 # tmp
 **/tmp/*
+
+# Plain Secret Yaml
+*plain-secret.yaml
