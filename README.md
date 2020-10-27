@@ -115,6 +115,48 @@ gcloud builds submit --config cloudbuild.yml --substitutions _DOCKER_IMAGE_TAG=$
 - 公開アクセスを許可するためには、Cloud Run起動元ロールをallUsersに与える必要がある（[参照](https://cloud.google.com/run/docs/authenticating/public?hl=ja)）
 - フルマネージドで利用するケースでは、NetworkFirewallを設定するユースケースは見当たらない
 
+### Sealed Secret
+
+- Install
+
+```bash
+# Client Side
+brew install kubeseal
+
+# GKE Side
+# default:Installed in kube-system namespace
+kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/${SEALED_SECRET_VERSION}/controller.yaml
+```
+
+- Get Certificates
+
+```bash
+# ログに公開鍵が出力されているため、これを保存する
+kubectl logs service/sealed-secrets-controller -n kube-system
+echo ${PEM_LOG} > $HOME/.kubeseal/cert.pem
+```
+
+- Create Plain Secret
+
+```bash
+kubectl -n default create secret generic mintaklinebot --from-literal=${KEY}=${VALUE} --dry-run -o yaml > mysecret.yaml
+```
+
+- Create Sealed Secret Yaml
+
+```bash
+kubeseal --format=yaml --cert=$HOME/.kubeseal/cert.pem < mysecret.yaml > mysecret-sealedsecret.yaml
+```
+
+- Apply Secret
+
+```bash
+kubectl apply -f mysecret-sealedsecret.yaml
+
+# 確認
+kubectl get secret mysecret
+```
+
 ### Limitations
 
 - CloudBuildAPIを有効にした時点で、CloudBuildが使用するサービスアカウントは`[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`で[固定](https://cloud.google.com/cloud-build/docs/securing-builds/set-service-account-permissions)で作成される。
@@ -124,3 +166,5 @@ gcloud builds submit --config cloudbuild.yml --substitutions _DOCKER_IMAGE_TAG=$
 
 - [gcloud builds submit](https://cloud.google.com/sdk/gcloud/reference/builds/submit?hl=ja)
 - [gcloud run deploy](https://cloud.google.com/sdk/gcloud/reference/run/deploy)
+- [Sealed Secret](https://github.com/bitnami-labs/sealed-secrets)
+- [Sealed Secret Use in Private GKE](https://github.com/bitnami-labs/sealed-secrets/blob/master/docs/GKE.md#private-gke-clusters)
