@@ -19,7 +19,7 @@ variable cluster_location {
 variable machine_type {
   type        = string
   description = "ノードマシン種別"
-  default     = "n1-standard-1"
+  default     = "n1-highcpu-4"
 }
 
 variable master_ip_range {
