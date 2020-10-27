@@ -49,6 +49,21 @@ resource google_container_cluster vpc_native_cluster {
     channel = "REGULAR"
   }
 
+  # tfsec: Disable basic auth with static passwords for client authentication with a master_auth block container empty strings for user and password.
+  master_auth {
+    username = ""
+    password = ""
+
+    client_certificate_config {
+      issue_client_certificate = false
+    }
+  }
+
+  # # tfsec: It is recommended to define a PSP for your pods and enable PSP enforcement.
+  # pod_security_policy_config {
+  #   enabled = true
+  # }
+
   maintenance_policy {
     daily_maintenance_window {
       start_time = "18:00" # JST 03:00 / 曜日までは指定できない
