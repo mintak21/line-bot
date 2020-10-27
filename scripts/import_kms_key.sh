@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # KMS Key-RingとKeyは削除できない仕様のため、Importする
 # Keyに関してはdestroyすると無効化されるので、復元する必要はあり
