@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - ingress.yaml
+  - mintaklinebot-sealedsecret.yaml
 
 images:
   - name: us.gcr.io/mintak/linebot/python
@@ -14,5 +15,3 @@ configMapGenerator:
   - name: linebot-api
     literals:
       - SECRET_TYPE=PLAIN_ENV
-      - CHANNEL_SECRET=dummy
-      - CHANNEL_ACCESS_TOKEN=dummy

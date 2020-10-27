@@ -43,6 +43,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: linebot-api
+            - secretRef:
+                name: linebot-api
       restartPolicy: Always
 ---
 apiVersion: autoscaling/v2beta2
