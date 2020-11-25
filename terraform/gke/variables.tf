@@ -1,3 +1,10 @@
+# use tfvars
+variable ip_whitelists {
+  type        = list(string)
+  description = "接続許可するIPアドレスリスト"
+}
+
+# use default values
 variable service_name {
   type        = string
   description = "サービス名"
@@ -44,15 +51,4 @@ variable vpc_subnetwork_primary_ip_range {
   type        = string
   description = "サブネットのプライマリIPレンジ"
   default     = "10.128.0.0/24"
-}
-
-variable ip_whitelists {
-  type        = list(string)
-  description = "接続許可するIPアドレスリスト"
-  default = [
-    "220.215.227.226/32",
-    "111.239.191.38/32", # 渋谷のIP
-    "203.104.156.0/24",  # おそらくLINEサーバのOutbound IP
-    "147.92.149.166/32", # temp
-  ]
 }
