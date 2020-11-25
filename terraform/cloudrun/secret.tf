@@ -16,6 +16,16 @@ resource google_secret_manager_secret linebot_secret {
   }
 }
 
+resource google_secret_manager_secret_version plain_channel_secret {
+  secret      = google_secret_manager_secret.linebot_secret[0].id
+  secret_data = var.plain_channel_secret
+}
+
+resource google_secret_manager_secret_version plain_channel_access_token {
+  secret      = google_secret_manager_secret.linebot_secret[1].id
+  secret_data = var.plain_channel_access_token
+}
+
 locals {
   linebot_secret_ids = [
     "CHANNEL_SECRET",

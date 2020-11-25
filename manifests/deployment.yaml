@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linebot
+  labels:
+    app: linebot
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: linebot
+      tier: api
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: linebot
+        tier: api
+    spec:
+      containers:
+        - name: linebot-api
+          image: us.gcr.io/mintak/linebot/python
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          envFrom:
+            - configMapRef:
+                name: linebot-api
+            - secretRef:
+                name: linebot-api
+      restartPolicy: Always
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: linebot
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: linebot
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75

@@ -4,7 +4,7 @@ variable project_id {
   default     = "mintak"
 }
 
-variable gcp_region {
+variable function_location {
   type        = string
   description = "リージョン"
   default     = "us-central1"
