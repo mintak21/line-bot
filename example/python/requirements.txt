@@ -1,4 +1,4 @@
-Flask==1.1.2
+Flask==2.3.2
 google-cloud-kms==2.2.0
 google-cloud-secret-manager==2.0.0
 line-bot-sdk==1.17.0
